@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>紫微斗數 - 命運羅盤</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Noto Sans TC"', 'sans-serif'],
+              // Removed serif to unify typography as requested
+            },
+            colors: {
+              mystic: {
+                950: '#0f0518', // Darker background for chart
+                900: '#1a0b2e',
+                800: '#2d1b4e',
+                700: '#432c7a',
+                600: '#5b3ea8',
+                500: '#7652d6',
+                400: '#9b7bf6',
+                300: '#bca4ff',
+                200: '#ddd1ff',
+                100: '#eee8ff',
+                50: '#fbf9ff',
+              },
+              gold: {
+                300: '#fcd34d',
+                400: '#fbbf24',
+                500: '#f59e0b',
+                600: '#d97706',
+                700: '#b45309',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #1a0b2e;
+        color: #eee8ff;
+        font-family: "Noto Sans TC", sans-serif;
+      }
+      /* Custom scrollbar - keep for main page but hide for tabs */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #2d1b4e;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #5b3ea8;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #7652d6;
+      }
+      
+      /* Hide scrollbar for specific elements */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "lunar-javascript": "https://esm.sh/lunar-javascript@1.6.13"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
