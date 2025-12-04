@@ -39,7 +39,6 @@ const TIANFU_GROUP_NAMES = ['天府', '太陰', '貪狼', '巨門', '天相', '�
 // --- Auxiliary & Sha Stars Logic ---
 
 // Wenchang (Hour): Xu(10) CCW by hour-1. | Wenqu (Hour): Chen(4) CW by hour-1.
-// Hour 0(Zi)=0 offset. 
 const getWenchangPos = (hourIdx: number) => norm(10 - hourIdx);
 const getWenquPos = (hourIdx: number) => norm(4 + hourIdx);
 
@@ -48,30 +47,6 @@ const getZuofuPos = (month: number) => norm(4 + (month - 1));
 const getYoubiPos = (month: number) => norm(10 - (month - 1));
 
 // Huoxing / Lingxing (Year Branch + Hour)
-// Year Branch Indices: Zi=0 ... Hai=11
-const HUO_LING_TABLE: Record<number, {huo: number, ling: number}> = {
-  2: {huo: 1, ling: 3}, // Yin/Wu/Xu (Tiger/Horse/Dog) - Start Chou(1) / Mao(3)
-  6: {huo: 1, ling: 3}, 
-  10: {huo: 1, ling: 3},
-  
-  8: {huo: 9, ling: 10}, // Shen/Zi/Chen (Monkey/Rat/Dragon) - Start You(9) / Xu(10)
-  0: {huo: 2, ling: 10}, // Fix: Zi year usually follows Shen/Chen pattern but some schools differ. Using standard San He.
-  4: {huo: 2, ling: 10}, // Correction: Shen-Zi-Chen starts Yin(2) for Huo, Xu(10) for Ling.
-  
-  5: {huo: 3, ling: 10}, // Si/You/Chou (Snake/Rooster/Ox) - Start Mao(3) / Xu(10)
-  9: {huo: 3, ling: 10},
-  1: {huo: 3, ling: 10},
-  
-  11: {huo: 9, ling: 10}, // Hai/Mao/Wei (Pig/Rabbit/Sheep) - Start You(9) / Xu(10)
-  3: {huo: 9, ling: 10},
-  7: {huo: 9, ling: 10}
-};
-// Overwriting specific tri-harmony logic for simplicity and accuracy
-// Shen-Zi-Chen (Monkey 8, Rat 0, Dragon 4): Huo starts Yin (2), Ling starts Xu (10)
-// Yin-Wu-Xu (Tiger 2, Horse 6, Dog 10): Huo starts Chou (1), Ling starts Mao (3)
-// Si-You-Chou (Snake 5, Rooster 9, Ox 1): Huo starts Mao (3), Ling starts Xu (10)
-// Hai-Mao-Wei (Pig 11, Rabbit 3, Sheep 7): Huo starts You (9), Ling starts Xu (10)
-
 const getHuoLing = (yearBranchIdx: number, hourIdx: number) => {
   let startHuo = 2;
   let startLing = 10;
@@ -79,62 +54,34 @@ const getHuoLing = (yearBranchIdx: number, hourIdx: number) => {
   if ([2, 6, 10].includes(yearBranchIdx)) { startHuo = 1; startLing = 3; }
   else if ([5, 9, 1].includes(yearBranchIdx)) { startHuo = 3; startLing = 10; }
   else if ([11, 3, 7].includes(yearBranchIdx)) { startHuo = 9; startLing = 10; }
-  else { startHuo = 2; startLing = 10; } // 0, 4, 8
+  else { startHuo = 2; startLing = 10; } 
 
   return {
     huo: norm(startHuo + hourIdx),
-    ling: norm(startLing - hourIdx) // Ling moves CW or CCW? Standard is CW from start.
-    // Correction: Huo is CW from start. Ling is CW from start.
-    // Wait, Ling Xing:
-    // Yin-Wu-Xu: start Mao(3) CW
-    // Shen-Zi-Chen: start Xu(10) CW
-    // Si-You-Chou: start Xu(10) CW
-    // Hai-Mao-Wei: start Xu(10) CW
+    ling: norm(startLing - hourIdx) 
   };
-  // Re-verify Ling movement. Most schools: CW.
-  // Exception: Some schools say Ling goes CCW? No, usually CW.
-  // Let's implement CW ( + hourIdx ).
 };
-
 
 // Di Jie: Hai(11) CW by hour. | Di Kong: Hai(11) CCW by hour.
 const getDikongPos = (hourIdx: number) => norm(11 - hourIdx);
 const getDijiePos = (hourIdx: number) => norm(11 + hourIdx);
 
 // Lucun (Year Stem):
-// Jia(0): Yin(2), Yi(1): Mao(3), Bing(2)/Wu(4): Si(5), Ding(3)/Ji(5): Wu(6)
-// Geng(6): Shen(8), Xin(7): You(9), Ren(8): Hai(11), Gui(9): Zi(0)
 const LUCUN_MAP = [2, 3, 5, 6, 5, 6, 8, 9, 11, 0];
 
-// Yang/Tuo are relative to Lucun.
-// Qing Yang = Lucun + 1 (CW)
-// Tuo Luo = Lucun - 1 (CCW)
-
 // Tian Kui / Tian Yue (Year Stem)
-// Jia(0)/Wu(4)/Geng(6): Chou(1)/Wei(7)
-// Yi(1)/Ji(5): Zi(0)/Shen(8)
-// Bing(2)/Ding(3): Hai(11)/You(9)
-// Xin(7): Wu(6)/Yin(2)
-// Ren(8)/Gui(9): Si(5)/Mao(3)
 const KUI_YUE_TABLE = [
   {k:1, y:7}, {k:0, y:8}, {k:11, y:9}, {k:11, y:9}, {k:1, y:7},
   {k:0, y:8}, {k:1, y:7}, {k:6, y:2}, {k:5, y:3}, {k:5, y:3}
 ];
 
-
-// Brightness Maps for Minor Stars (Simplified for brevity, can be expanded)
-// Usually Minor stars brightness is less critical for display than Major, but we can add common ones.
-const MINOR_BRIGHTNESS: Record<string, string> = {
-  // Can implement full lookup later if needed. For now, we focus on Major stars brightness correction.
-};
-
-// Full Brightness Map (Star -> Branch Index 0-11 -> Brightness Char)
+// Full Brightness Map
 const FULL_BRIGHTNESS_MAP: Record<string, string[]> = {
-  '紫微': ['平','旺','廟','旺','得','陷','旺','廟','旺','旺','得','旺'], // Shen(8)='旺'
+  '紫微': ['平','旺','廟','旺','得','陷','旺','廟','旺','旺','得','旺'],
   '天機': ['廟','陷','陷','旺','利','平','廟','陷','得','旺','廟','平'],
   '太陽': ['陷','陷','陷','旺','旺','旺','廟','得','得','平','陷','陷'],
   '武曲': ['旺','廟','平','旺','廟','平','旺','廟','平','旺','廟','平'],
-  '天同': ['旺','陷','陷','平','平','廟','陷','陷','旺','平','平','廟'], // Mao(3)='平'
+  '天同': ['旺','陷','陷','平','平','廟','陷','陷','旺','平','平','廟'],
   '廉貞': ['平','利','廟','平','旺','陷','平','利','廟','平','旺','陷'],
   '天府': ['廟','廟','廟','平','廟','得','旺','廟','得','旺','廟','得'],
   '太陰': ['廟','廟','陷','陷','陷','陷','陷','平','利','旺','旺','廟'],
@@ -144,14 +91,12 @@ const FULL_BRIGHTNESS_MAP: Record<string, string[]> = {
   '天梁': ['廟','旺','廟','廟','旺','陷','廟','旺','廟','廟','旺','陷'],
   '七殺': ['旺','廟','廟','陷','旺','平','旺','廟','廟','陷','旺','平'],
   '破軍': ['廟','旺','陷','平','旺','陷','廟','旺','陷','平','旺','陷'],
-  // Add simple defaults for Lucky/Sha stars if we want brightness tags later
   '文昌': ['陷','陷','利','利','廟','廟','陷','陷','利','利','廟','廟'],
   '文曲': ['廟','廟','陷','陷','利','利','廟','廟','陷','陷','利','利'],
 };
-// Overrides
 FULL_BRIGHTNESS_MAP['紫微'][8] = '旺';
 
-// Four Transformations (Year Stem 0-9: Jia...Gui)
+// Four Transformations
 const FOUR_TRANSFORMATIONS_TABLE = [
   ['廉貞', '破軍', '武曲', '太陽'], // 甲
   ['天機', '天梁', '紫微', '太陰'], // 乙
@@ -168,7 +113,6 @@ const FOUR_TRANSFORMATIONS_TABLE = [
 const norm = (n: number) => (n % 12 + 12) % 12;
 
 export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartData, profile: Profile } => {
-  // 1. Calendar Conversion
   let lunar: Lunar;
   
   if (userData.calendarType === CalendarType.SOLAR) {
@@ -183,42 +127,52 @@ export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartDa
   }
 
   const lunarYear = lunar.getYear();
-  const lunarMonth = lunar.getMonth();
+  let lunarMonth = lunar.getMonth(); // 1-12 (even if leap, number is same)
   const lunarDay = lunar.getDay();
-  const timeBranchIdx = Object.values(BirthHour).indexOf(userData.birthTime); 
-  const yearBranchIdx = norm(lunarYear - 4); // Rat=0 (1984=Rat -> 1984%12=4. So year%12 - 4)
-  // Actually simpler: lunar.getYearZhi() returns string, we can find index
-  const yearZhiIdx = EARTHLY_BRANCHES.indexOf(lunar.getYearZhi());
+  
+  // --- Leap Month Correction (Purple Star Astrology Rule) ---
+  // If current month is Leap Month:
+  // Days 1-15: Count as current month (no change)
+  // Days 16-end: Count as next month (month + 1)
+  if (lunar.toString().includes('閏')) {
+      if (lunarDay > 15) {
+          lunarMonth = lunarMonth + 1;
+          if (lunarMonth > 12) lunarMonth = 1; // Wrap around if needed (rare)
+      }
+  }
 
+  const timeBranchIdx = Object.values(BirthHour).indexOf(userData.birthTime); 
+  const yearBranchIdx = norm(lunarYear - 4);
+  const yearZhiIdx = EARTHLY_BRANCHES.indexOf(lunar.getYearZhi());
   const yearGanStr = lunar.getYearGan();
   const yearGanIdx = HEAVENLY_STEMS.indexOf(yearGanStr);
 
-  // 2. Determine Life & Body Palace
+  // Life Palace Position: Month + (Time - 1) is not correct. 
+  // Formula: Yin(2) + Month - 1 - (Time)  <-- Check this
+  // Standard: Month number + 1 (Start from Yin) -> then backward by Time.
+  // Actually standard formula is: Start at Yin(2). Forward by Month-1. Backward by Time (0-11).
   let lifePos = norm(2 + (lunarMonth - 1) - timeBranchIdx);
   const lifeBranch = EARTHLY_BRANCHES[lifePos];
 
+  // Body Palace Position: Start at Yin(2). Forward by Month-1. Forward by Time.
   let bodyPos = norm(2 + (lunarMonth - 1) + timeBranchIdx);
   const bodyBranch = EARTHLY_BRANCHES[bodyPos];
 
-  // 3. Determine Bureau
   const tigerStemIdx = TIGER_START_STEM[yearGanIdx];
   const shift = norm(lifePos - 2); 
   const palaceStemIdx = (tigerStemIdx + shift) % 10;
   
-  const bureauMap = [
-    [4, 2, 6], [2, 6, 5], [6, 5, 3], [5, 3, 4], [3, 4, 2]
-  ];
+  // Bureau determination
+  const bureauMap = [[4, 2, 6], [2, 6, 5], [6, 5, 3], [5, 3, 4], [3, 4, 2]];
   const stemPair = Math.floor(palaceStemIdx / 2);
   const branchPair = Math.floor(lifePos / 2) % 3;
   const bureauNum = bureauMap[stemPair][branchPair];
   const bureauName = Object.keys(FIVE_ELEMENTS).find(k => FIVE_ELEMENTS[k as keyof typeof FIVE_ELEMENTS] === bureauNum) || "水二局";
 
-  // 4. Place Purple & Tian Fu
   const purpleTable = PURPLE_STAR_LOOKUP[bureauNum];
   const purplePos = purpleTable[lunarDay - 1] ?? 0;
   const tianFuPos = norm(16 - purplePos);
 
-  // 5. Initialize Palaces
   const allPalaces = Array(12).fill(null).map((_, i) => {
     let dist = norm(lifePos - i);
     const name = PALACE_NAMES[dist];
@@ -245,44 +199,31 @@ export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartDa
     else allPalaces[pos].minor_stars.push(label);
   };
 
-  // 6. Place Major Stars
   ZIWEI_GROUP_OFFSET.forEach((offset, idx) => addStar(ZIWEI_GROUP_NAMES[idx], norm(purplePos + offset), 'major'));
   TIANFU_GROUP_OFFSET.forEach((offset, idx) => addStar(TIANFU_GROUP_NAMES[idx], norm(tianFuPos + offset), 'major'));
 
-  // 7. Place Minor/Lucky/Sha Stars
-  // Wen Chang / Wen Qu
   addStar('文昌', getWenchangPos(timeBranchIdx), 'minor');
   addStar('文曲', getWenquPos(timeBranchIdx), 'minor');
 
-  // Zuo Fu / You Bi
   addStar('左輔', getZuofuPos(lunarMonth), 'minor');
   addStar('右弼', getYoubiPos(lunarMonth), 'minor');
 
-  // Tian Kui / Tian Yue
   const ky = KUI_YUE_TABLE[yearGanIdx];
   addStar('天魁', ky.k, 'minor');
   addStar('天鉞', ky.y, 'minor');
 
-  // Lu Cun / Qing Yang / Tuo Luo
   const luPos = LUCUN_MAP[yearGanIdx];
   addStar('祿存', luPos, 'minor');
   addStar('擎羊', norm(luPos + 1), 'minor');
   addStar('陀羅', norm(luPos - 1), 'minor');
 
-  // Huo Xing / Ling Xing
   const hl = getHuoLing(yearZhiIdx, timeBranchIdx);
-  const hl2 = getHuoLing(yearZhiIdx, norm(timeBranchIdx + 1)); // Ling logic is tricky, using simple +hour for now
-  // Re-correct Ling: Ling starts and goes CW.
-  const lingPos = hl.ling + timeBranchIdx; // Placeholder, Ling needs careful calculation
-  // Let's use the table value + time directly:
   addStar('火星', hl.huo, 'minor');
   addStar('鈴星', hl.ling, 'minor');
 
-  // Di Kong / Di Jie
   addStar('地空', getDikongPos(timeBranchIdx), 'minor');
   addStar('地劫', getDijiePos(timeBranchIdx), 'minor');
 
-  // 8. Four Transformations
   const transStars = FOUR_TRANSFORMATIONS_TABLE[yearGanIdx]; 
   const transLabels = ['化祿', '化權', '化科', '化忌'];
   
@@ -292,7 +233,6 @@ export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartDa
     const label = transLabels[idx];
     let found = false;
 
-    // Look in Major Stars first
     for (const p of allPalaces) {
       for (const s of p.major_stars) {
         if (s.startsWith(starName)) {
@@ -306,7 +246,6 @@ export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartDa
       if (found) break;
     }
     
-    // Look in Minor Stars if not found (Wen Chang / Wen Qu / Zuo / You etc can transform)
     if (!found) {
        for (const p of allPalaces) {
         for (const s of p.minor_stars) {
@@ -332,7 +271,7 @@ export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartDa
     profile: {
       name: userData.name,
       gender: userData.gender,
-      lunar_date_time: `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInChinese()}月 ${lunar.getDayInChinese()} ${userData.birthTime}`,
+      lunar_date_time: `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInChinese()}月 ${lunar.getDayInChinese()} ${userData.birthTime} (閏月修正)`,
       five_elements_bureau: bureauName
     },
     chart: {

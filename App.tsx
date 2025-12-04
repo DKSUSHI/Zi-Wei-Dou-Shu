@@ -1,21 +1,11 @@
-// @ts-nocheck
 import React, { useState } from 'react';
-// @ts-ignore
-import InputForm from './components/InputForm.tsx';
-// @ts-ignore
-import ChartGrid from './components/ChartGrid.tsx';
-// @ts-ignore
-import AnalysisSection from './components/AnalysisSection.tsx';
-// @ts-ignore
-import { UserInput, AstrologyResponse, PalaceChartData, Profile } from './types.ts';
-// @ts-ignore
-import { calculateZiWeiChart } from './services/ziweiCalculator.ts';
-// @ts-ignore
-import { generateInterpretation } from './services/geminiService.ts';
-// @ts-ignore
-import { ArrowLeft } from './components/Icons.tsx';
-// @ts-ignore
-import { SAMPLE_DATA_LOADING } from './constants.ts';
+import InputForm from './components/InputForm';
+import ChartGrid from './components/ChartGrid';
+import AnalysisSection from './components/AnalysisSection';
+import { UserInput, AstrologyResponse } from './types';
+import { calculateZiWeiChart } from './services/ziweiCalculator';
+import { generateInterpretation } from './services/geminiService';
+import { ArrowLeft } from './components/Icons';
 
 const App: React.FC = () => {
   const [result, setResult] = useState<AstrologyResponse | null>(null);
@@ -32,13 +22,12 @@ const App: React.FC = () => {
       // 1. Local Calculation (Instant)
       const { chart, profile } = calculateZiWeiChart(data);
       
-      // Set result immediately with chart data (Analysis is pending)
       const initialResult: AstrologyResponse = {
         profile,
         palace_chart_data: chart,
         analysis_interpretation: {
           overall_destiny: "大師正在觀星中，請稍候...",
-          palaces: [] // Will be populated by AI
+          palaces: [] 
         }
       };
       
@@ -77,63 +66,45 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-mystic-900 text-mystic-50 font-sans selection:bg-gold-500 selection:text-white pb-12">
-      {/* Background decoration */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-mystic-800 via-mystic-900 to-black opacity-60"></div>
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-3xl"></div>
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4 py-8">
+    <div className="min-h-screen pb-10">
+      <div className="relative z-10 container mx-auto px-4 py-6 md:py-12">
         
-        {/* Header */}
-        {!result && (
-            <header className="flex justify-center items-center py-10">
-              {/* Logo or Title Placeholder */}
-            </header>
-        )}
-
-        {/* Main Content Area */}
         <main className="w-full">
           {error && (
-            <div className="max-w-lg mx-auto mb-6 bg-red-900/50 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg text-center">
+            <div className="max-w-md mx-auto mb-8 bg-red-500/10 border border-red-500/40 text-red-200 px-6 py-4 rounded-xl text-center backdrop-blur-sm shadow-lg">
               {error}
             </div>
           )}
 
           {!result && (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="flex flex-col items-center justify-center min-h-[70vh]">
               <InputForm onSubmit={handleFormSubmit} isLoading={loading} />
               
               {!loading && (
-                <div className="mt-12 text-center text-mystic-500 text-xs max-w-md">
-                  <p>本服務採用標準曆法運算排盤，結合 AI 進行深度解析。</p>
-                  <p>算命結果僅供參考，命運掌握在自己手中。</p>
-                </div>
+                <footer className="mt-16 text-center text-mystic-600 text-xs">
+                  <p className="opacity-70">&copy; {new Date().getFullYear()} Destiny Compass. All rights reserved.</p>
+                </footer>
               )}
             </div>
           )}
           
           {result && (
-            <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-              {/* Result Header & Nav */}
-              <div className="flex justify-between items-center mb-8 sticky top-0 z-20 bg-mystic-900/90 backdrop-blur-md py-4 px-2 border-b border-mystic-800">
+            <div className="animate-fade-in">
+              {/* Header Nav */}
+              <div className="flex justify-between items-center mb-8 bg-mystic-950/80 backdrop-blur-md sticky top-0 z-50 py-4 px-4 -mx-4 border-b border-white/5">
                 <button 
                   onClick={handleReset}
-                  className="flex items-center gap-2 text-mystic-400 hover:text-gold-400 transition-colors"
+                  className="flex items-center gap-2 text-mystic-400 hover:text-white transition-colors group"
                 >
-                  <ArrowLeft className="w-5 h-5" />
-                  <span className="hidden sm:inline">重新排盤</span>
+                  <div className="p-1.5 rounded-full bg-white/5 group-hover:bg-gold-500 group-hover:text-mystic-950 transition-all">
+                    <ArrowLeft className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm font-medium">重新排盤</span>
                 </button>
-                <div className="text-center">
-                   <h1 className="text-xl font-bold text-gold-400 tracking-wider">紫微斗數命盤</h1>
-                </div>
-                <div className="w-20"></div> {/* Spacer for centering */}
               </div>
 
-              {/* Chart Visualization */}
-              <div className="mb-12">
+              {/* Chart */}
+              <div className="mb-16">
                 <ChartGrid 
                   data={result.palace_chart_data} 
                   profile={result.profile} 
@@ -141,26 +112,17 @@ const App: React.FC = () => {
                 />
               </div>
 
-              {/* Detailed Analysis */}
+              {/* Analysis */}
               <div id="analysis" className="transition-opacity duration-500">
                 {analyzing ? (
-                   <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                      <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
-                      <p className="text-gold-300 font-bold text-lg animate-pulse">大師正在解讀星象...</p>
-                      <p className="text-mystic-400 text-sm">正在分析全盤格局與宮位細節</p>
+                   <div className="glass-panel rounded-3xl p-12 text-center max-w-2xl mx-auto">
+                      <div className="w-16 h-16 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                      <p className="text-gold-400 font-bold text-xl mb-2 animate-pulse">星象解讀中...</p>
+                      <p className="text-mystic-400">正在連結天機，分析您的命盤格局</p>
                    </div>
                 ) : (
                    <AnalysisSection analysis={result.analysis_interpretation} />
                 )}
-              </div>
-
-              <div className="text-center mt-20 mb-10">
-                 <button 
-                  onClick={handleReset}
-                  className="bg-mystic-800 hover:bg-mystic-700 text-mystic-300 font-medium py-3 px-8 rounded-full transition-all border border-mystic-600"
-                >
-                  算另一位
-                </button>
               </div>
             </div>
           )}

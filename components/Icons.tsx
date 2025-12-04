@@ -1,4 +1,3 @@
-// @ts-ignore
 import React from 'react';
 
 export const Sparkles = ({ className }: { className?: string }) => (

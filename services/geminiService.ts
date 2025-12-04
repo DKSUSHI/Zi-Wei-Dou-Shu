@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { AstrologyResponse, PalaceChartData, Profile } from "../types";
+import { PalaceChartData, Profile } from "../types";
 
 // Enhanced Schema for Tab-based Analysis and Detailed Star info
 const analysisSchema: Schema = {
@@ -37,11 +37,29 @@ const analysisSchema: Schema = {
 };
 
 export const generateInterpretation = async (profile: Profile, chartData: PalaceChartData): Promise<any> => {
-  if (!process.env.API_KEY) {
-    throw new Error("API Key is missing.");
+  let apiKey = '';
+
+  // 1. Safe access to Vite environment variables
+  // Check if import.meta and import.meta.env exist before accessing
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    apiKey = import.meta.env.VITE_API_KEY;
   }
 
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  // 2. Fallback: Try to get from process.env (if polyfilled in vite.config.ts)
+  if (!apiKey && typeof process !== 'undefined' && process.env) {
+    apiKey = process.env.API_KEY;
+  }
+
+  // 3. Fallback: Try localStorage (Allows manual setting in browser console for static sites)
+  if (!apiKey) {
+    apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+  }
+
+  if (!apiKey) {
+    throw new Error("API Key 未設定。請在 .env 檔案中設定 VITE_API_KEY，或在瀏覽器 Console 執行 localStorage.setItem('GEMINI_API_KEY', '您的金鑰')");
+  }
+
+  const ai = new GoogleGenAI({ apiKey: apiKey });
 
   const systemInstruction = `
   角色： 精通「飛星派紫微斗數」的大師。
@@ -55,8 +73,9 @@ export const generateInterpretation = async (profile: Profile, chartData: Palace
      - 字數控制在 150-200 字，精簡扼要。
 
   2. **palaces (宮位解析)**：
-     - 順序：命宮、財帛宮、官祿宮，其餘按順序。
+     - 順序：命宮、財帛宮、官祿宮，身宮(若非前三者)，其餘按順序。
      - **stars_detail**：針對宮內每顆星曜（主星、吉煞星）進行影響分析。需結合「亮度（廟旺利陷）」與「四化（祿權科忌）」的交互影響。
+     - **身宮特別分析**：對於標記為「身宮」的宮位，請在 summary 或額外的說明中，特別補充該宮位對案主「後天運勢」、「中年後發展」以及「內在執著點」的影響。
      - **空宮處理**：若該宮位無主星（空宮），請務必參考提供的「借對宮主星」資訊進行分析，並在說明中提及是借用對宮力量，且力量會有所折損。
      - 風格：現代、口語、實用，避免過於艱澀的古文，直接給予生活建議。
   `;
@@ -74,8 +93,11 @@ export const generateInterpretation = async (profile: Profile, chartData: Palace
   各宮位詳細星曜與狀態：
   ${chartData.all_palaces.map((p, index) => {
     const isEmpty = p.major_stars.length === 0;
+    const isBody = chartData.body_palace_location === p.branch;
+    
     let contextInfo = `主星: [${p.major_stars.join(', ')}]`;
     let instruction = "";
+    let bodyContext = isBody ? "【重要標記：此為身宮，請分析其對後天運勢與性格修正的影響】" : "";
 
     if (isEmpty) {
         // Calculate opposite palace index (current + 6) % 12
@@ -89,6 +111,7 @@ export const generateInterpretation = async (profile: Profile, chartData: Palace
      ${contextInfo}
      輔/煞/雜星: [${p.minor_stars.join(', ')}]
      四化標記: ${p.is_four_transformed}
+     ${bodyContext}
      ${instruction}
     `;
   }).join('\n')}
@@ -102,7 +125,7 @@ export const generateInterpretation = async (profile: Profile, chartData: Palace
         systemInstruction: systemInstruction,
         responseMimeType: "application/json",
         responseSchema: analysisSchema,
-        thinkingConfig: { thinkingBudget: 1024 } // Give it some thought for pattern recognition
+        thinkingConfig: { thinkingBudget: 1024 } 
       }
     });
 

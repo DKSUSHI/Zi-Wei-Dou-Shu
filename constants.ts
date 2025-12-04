@@ -34,7 +34,6 @@ export const ALL_MAJOR_STARS = [
   '天府', '太陰', '貪狼', '巨門', '天相', '天梁', '七殺', '破軍'
 ];
 
-// Priority list for sorting stars in UI if needed
 export const STAR_PRIORITY = [
   ...ALL_MAJOR_STARS,
   '左輔', '右弼', '文昌', '文曲', '天魁', '天鉞', '祿存',

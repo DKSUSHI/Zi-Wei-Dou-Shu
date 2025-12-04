@@ -1,11 +1,7 @@
-// @ts-nocheck
 import React, { useState } from 'react';
-// @ts-ignore
-import { UserInput, Gender, CalendarType, BirthHour } from '../types.ts';
-// @ts-ignore
-import { HOURS_LIST } from '../constants.ts';
-// @ts-ignore
-import { Sparkles, Moon, Sun, Clock, Calendar, User } from './Icons.tsx';
+import { UserInput, Gender, CalendarType, BirthHour } from '../types';
+import { HOURS_LIST } from '../constants';
+import { Sparkles, Moon, Sun, Clock, Calendar, User } from './Icons';
 
 interface InputFormProps {
   onSubmit: (data: UserInput) => void;
@@ -32,46 +28,52 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading }) => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto bg-mystic-800/80 backdrop-blur-md border border-mystic-600 rounded-2xl p-8 shadow-2xl">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gold-400 mb-2 flex justify-center items-center gap-2">
-          <Sparkles className="w-6 h-6" />
-          命運羅盤
-        </h2>
-        <p className="text-mystic-200 text-sm">輸入您的生辰，開啟紫微命盤解析</p>
+    <div className="w-full max-w-md mx-auto glass-panel rounded-3xl p-8 relative overflow-hidden transition-all hover:shadow-2xl hover:shadow-mystic-500/10">
+      {/* Decorative background glow */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+      <div className="text-center mb-8 relative z-10">
+        <div className="inline-flex items-center justify-center p-3 bg-mystic-800/50 rounded-full mb-4 ring-1 ring-white/10 shadow-lg">
+          <Sparkles className="w-6 h-6 text-gold-400" />
+        </div>
+        <h2 className="text-3xl font-bold text-white mb-2 tracking-wide">命運羅盤</h2>
+        <p className="text-mystic-300 text-sm font-light">探索紫微星辰，預見人生軌跡</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name */}
-        <div>
-          <label className="block text-mystic-300 text-sm font-medium mb-2 flex items-center gap-2">
-            <User className="w-4 h-4" /> 姓名
-          </label>
-          <input
-            type="text"
-            name="name"
-            required
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full bg-mystic-900 border border-mystic-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all placeholder-mystic-600"
-            placeholder="請輸入姓名"
-          />
+      <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+        {/* Name Input */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-mystic-400 uppercase tracking-wider ml-1">姓名</label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-mystic-500 group-focus-within:text-gold-400 transition-colors">
+              <User className="w-5 h-5" />
+            </div>
+            <input
+              type="text"
+              name="name"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full bg-mystic-950/50 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-mystic-600 focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 outline-none transition-all"
+              placeholder="請輸入您的姓名"
+            />
+          </div>
         </div>
 
-        {/* Gender & Calendar Type Grid */}
+        {/* Gender & Calendar */}
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-mystic-300 text-sm font-medium mb-2">性別</label>
-            <div className="flex bg-mystic-900 rounded-lg p-1 border border-mystic-600">
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-mystic-400 uppercase tracking-wider ml-1">性別</label>
+            <div className="flex bg-mystic-950/50 rounded-xl p-1 border border-white/10">
               {Object.values(Gender).map((g) => (
                 <button
                   key={g}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, gender: g }))}
-                  className={`flex-1 py-2 rounded-md text-sm font-medium transition-all ${
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
                     formData.gender === g
-                      ? 'bg-mystic-600 text-white shadow-md'
-                      : 'text-mystic-400 hover:text-white'
+                      ? 'bg-mystic-700 text-white shadow-md'
+                      : 'text-mystic-500 hover:text-mystic-300'
                   }`}
                 >
                   {g}
@@ -80,21 +82,21 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading }) => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-mystic-300 text-sm font-medium mb-2">曆法</label>
-            <div className="flex bg-mystic-900 rounded-lg p-1 border border-mystic-600">
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-mystic-400 uppercase tracking-wider ml-1">曆法</label>
+            <div className="flex bg-mystic-950/50 rounded-xl p-1 border border-white/10">
               {Object.values(CalendarType).map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setFormData(prev => ({ ...prev, calendarType: c }))}
-                  className={`flex-1 py-2 rounded-md text-sm font-medium transition-all flex justify-center items-center gap-1 ${
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all flex justify-center items-center gap-1.5 ${
                     formData.calendarType === c
                       ? 'bg-gold-600 text-white shadow-md'
-                      : 'text-mystic-400 hover:text-white'
+                      : 'text-mystic-500 hover:text-mystic-300'
                   }`}
                 >
-                  {c === CalendarType.LUNAR ? <Moon className="w-3 h-3"/> : <Sun className="w-3 h-3"/>}
+                  {c === CalendarType.LUNAR ? <Moon className="w-3.5 h-3.5"/> : <Sun className="w-3.5 h-3.5"/>}
                   {c}
                 </button>
               ))}
@@ -102,56 +104,66 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading }) => {
           </div>
         </div>
 
-        {/* Date */}
-        <div>
-          <label className="block text-mystic-300 text-sm font-medium mb-2 flex items-center gap-2">
-            <Calendar className="w-4 h-4" /> 出生日期
-          </label>
-          <input
-            type="date"
-            name="birthDate"
-            required
-            max="9999-12-31" 
-            value={formData.birthDate}
-            onChange={handleChange}
-            className="w-full bg-mystic-900 border border-mystic-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all [color-scheme:dark]"
-          />
+        {/* Date Input */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-mystic-400 uppercase tracking-wider ml-1">出生日期</label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-mystic-500 group-focus-within:text-gold-400 transition-colors">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <input
+              type="date"
+              name="birthDate"
+              required
+              max="9999-12-31"
+              value={formData.birthDate}
+              onChange={handleChange}
+              className="w-full bg-mystic-950/50 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 outline-none transition-all [color-scheme:dark]"
+            />
+          </div>
         </div>
 
-        {/* Time */}
-        <div>
-          <label className="block text-mystic-300 text-sm font-medium mb-2 flex items-center gap-2">
-            <Clock className="w-4 h-4" /> 出生時辰
-          </label>
-          <select
-            name="birthTime"
-            value={formData.birthTime}
-            onChange={handleChange}
-            className="w-full bg-mystic-900 border border-mystic-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all appearance-none"
-          >
-            {HOURS_LIST.map((h: string) => (
-              <option key={h} value={h}>
-                {h}
-              </option>
-            ))}
-          </select>
+        {/* Time Input */}
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-mystic-400 uppercase tracking-wider ml-1">出生時辰</label>
+          <div className="relative group">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-mystic-500 group-focus-within:text-gold-400 transition-colors">
+              <Clock className="w-5 h-5" />
+            </div>
+            <select
+              name="birthTime"
+              value={formData.birthTime}
+              onChange={handleChange}
+              className="w-full bg-mystic-950/50 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white focus:ring-2 focus:ring-gold-500/50 focus:border-gold-500/50 outline-none transition-all appearance-none cursor-pointer"
+            >
+              {HOURS_LIST.map((h: string) => (
+                <option key={h} value={h} className="bg-mystic-900 text-white">
+                  {h}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-400 text-white font-bold py-4 rounded-xl shadow-lg transform transition-all hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex justify-center items-center gap-2"
+          className="w-full mt-4 bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 hover:to-gold-400 text-white font-bold py-4 rounded-xl shadow-lg shadow-gold-900/20 transform transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center gap-2 group"
         >
           {isLoading ? (
             <>
-              <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-5 w-5 text-white/80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              排盤運算中...
+              <span className="text-white/80">天機運算中...</span>
             </>
           ) : (
-            '立即排盤'
+            <>
+              <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              <span>立即排盤</span>
+            </>
           )}
         </button>
       </form>
