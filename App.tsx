@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-nocheck
 import React, { useState } from 'react';
 // @ts-ignore
 import InputForm from './components/InputForm.tsx';

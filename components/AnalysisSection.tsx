@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 // @ts-ignore
 import { AnalysisInterpretation } from '../types.ts';

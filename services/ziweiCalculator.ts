@@ -1,9 +1,6 @@
-// @ts-ignore
 import { Solar, Lunar } from 'lunar-javascript';
-// @ts-ignore
-import { UserInput, CalendarType, PalaceChartData, Profile, BirthHour } from '../types.ts';
-// @ts-ignore
-import { EARTHLY_BRANCHES } from '../constants.ts';
+import { UserInput, CalendarType, PalaceChartData, Profile, BirthHour } from '../types';
+import { EARTHLY_BRANCHES } from '../constants';
 
 // --- Constants & Tables ---
 

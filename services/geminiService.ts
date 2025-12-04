@@ -1,7 +1,5 @@
-// @ts-ignore
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-// @ts-ignore
-import { AstrologyResponse, PalaceChartData, Profile } from "../types.ts";
+import { AstrologyResponse, PalaceChartData, Profile } from "../types";
 
 // Enhanced Schema for Tab-based Analysis and Detailed Star info
 const analysisSchema: Schema = {
@@ -39,24 +37,11 @@ const analysisSchema: Schema = {
 };
 
 export const generateInterpretation = async (profile: Profile, chartData: PalaceChartData): Promise<any> => {
-  // Static deployment check - no process.env access in GitHub Pages usually
-  let apiKey = "";
-  try {
-     apiKey = process.env.API_KEY || "";
-  } catch (e) {
-     // Ignore reference error
-  }
-  
-  if (!apiKey) {
-      // Fallback to localStorage for demo/static usage
-      apiKey = localStorage.getItem("GEMINI_API_KEY") || "";
+  if (!process.env.API_KEY) {
+    throw new Error("API Key is missing.");
   }
 
-  if (!apiKey) {
-    throw new Error("API Key is missing. Please set GEMINI_API_KEY in localStorage.");
-  }
-
-  const ai = new GoogleGenAI({ apiKey: apiKey });
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const systemInstruction = `
   角色： 精通「飛星派紫微斗數」的大師。

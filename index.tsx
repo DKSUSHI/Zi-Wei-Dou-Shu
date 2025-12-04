@@ -1,9 +1,6 @@
-// @ts-ignore
 import React from 'react';
-// @ts-ignore
 import ReactDOM from 'react-dom/client';
-// @ts-ignore
-import App from './App.tsx';
+import App from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
