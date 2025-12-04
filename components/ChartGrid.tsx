@@ -1,9 +1,9 @@
 // @ts-ignore
 import React from 'react';
 // @ts-ignore
-import { Profile, PalaceChartData } from '../types';
+import { Profile, PalaceChartData } from '../types.ts';
 // @ts-ignore
-import { GRID_MAPPING } from '../constants';
+import { GRID_MAPPING } from '../constants.ts';
 
 interface ChartGridProps {
   data: PalaceChartData;
@@ -60,7 +60,7 @@ const ChartGrid: React.FC<ChartGridProps> = ({ data, profile, overallDestiny }) 
           <div className="col-start-2 col-end-4 row-start-2 row-end-4 bg-mystic-900 flex flex-col items-center justify-center p-4 z-10 border-[2px] border-gold-500/50 shadow-inner">
              <div className="text-center space-y-3 w-full">
                <div className="text-mystic-400 text-xs font-medium tracking-widest">紫微斗數命盤</div>
-               <div className="text-2xl md:text-4xl font-black text-gold-400 tracking-widest drop-shadow-md">{profile.name}</div>
+               <div className="text-2xl md:text-4xl font-bold text-gold-400 tracking-widest drop-shadow-md">{profile.name}</div>
                <div className="h-px w-20 bg-gradient-to-r from-transparent via-gold-600 to-transparent mx-auto"></div>
                <div className="text-sm md:text-base text-white font-medium">{profile.lunar_date_time}</div>
                <div className="flex items-center justify-center gap-2 mt-1">
@@ -113,8 +113,8 @@ const ChartGrid: React.FC<ChartGridProps> = ({ data, profile, overallDestiny }) 
                    )}
   
                    <div className="flex justify-between items-end border-t border-mystic-700/30 pt-1">
-                      {/* Palace Name (Bottom Left) - Stronger Visuals */}
-                      <div className={`px-2 py-0.5 md:py-1 text-xs md:text-sm font-black tracking-wider rounded border shadow-sm ${
+                      {/* Palace Name (Bottom Left) - font-bold */}
+                      <div className={`px-2 py-0.5 md:py-1 text-xs md:text-sm font-bold tracking-wider rounded border shadow-sm ${
                         isLife 
                           ? 'bg-red-900 text-red-100 border-red-500/50' 
                           : 'bg-mystic-800 text-gold-400 border-gold-600/40'
@@ -122,9 +122,9 @@ const ChartGrid: React.FC<ChartGridProps> = ({ data, profile, overallDestiny }) 
                          {palace.name} {isBody && <span className="text-[10px] ml-0.5 opacity-80">(身)</span>}
                       </div>
                       
-                      {/* Stem/Branch (Bottom Right) - Weaker Visuals */}
+                      {/* Stem/Branch (Bottom Right) - font-normal */}
                       <div className="flex flex-col items-end leading-none">
-                         <span className="font-light text-mystic-500 text-xs md:text-sm tracking-widest">{palace.stem}{palace.branch}</span>
+                         <span className="font-normal text-mystic-500 text-xs md:text-sm tracking-widest">{palace.stem}{palace.branch}</span>
                       </div>
                    </div>
                 </div>

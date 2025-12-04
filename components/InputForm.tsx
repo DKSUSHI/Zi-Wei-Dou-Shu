@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-ignore
 import React, { useState } from 'react';
 // @ts-ignore
 import { UserInput, Gender, CalendarType, BirthHour } from '../types.ts';
