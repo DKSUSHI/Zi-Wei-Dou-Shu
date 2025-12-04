@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AnalysisInterpretation } from '../types';
+import { AnalysisInterpretation } from '../types.ts';
 import { BookOpen, Star, Sparkles, Sun } from 'lucide-react';
-import { ALL_MAJOR_STARS } from '../constants';
+import { ALL_MAJOR_STARS } from '../constants.ts';
 
 interface AnalysisSectionProps {
   analysis: AnalysisInterpretation;

@@ -1,4 +1,4 @@
-import { BirthHour } from './types';
+import { BirthHour } from './types.ts';
 
 export const HOURS_LIST = Object.values(BirthHour);
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { UserInput, Gender, CalendarType, BirthHour } from '../types';
-import { HOURS_LIST } from '../constants';
+import { UserInput, Gender, CalendarType, BirthHour } from '../types.ts';
+import { HOURS_LIST } from '../constants.ts';
 import { Sparkles, Moon, Sun, Clock, Calendar, User } from 'lucide-react';
 
 interface InputFormProps {

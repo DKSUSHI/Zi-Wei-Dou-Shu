@@ -1,6 +1,6 @@
 import { Solar, Lunar } from 'lunar-javascript';
-import { UserInput, CalendarType, PalaceChartData, Profile, BirthHour } from '../types';
-import { EARTHLY_BRANCHES } from '../constants';
+import { UserInput, CalendarType, PalaceChartData, Profile, BirthHour } from '../types.ts';
+import { EARTHLY_BRANCHES } from '../constants.ts';
 
 // --- Constants & Tables ---
 
@@ -56,7 +56,7 @@ const HUO_LING_TABLE: Record<number, {huo: number, ling: number}> = {
   
   8: {huo: 9, ling: 10}, // Shen/Zi/Chen (Monkey/Rat/Dragon) - Start You(9) / Xu(10)
   0: {huo: 2, ling: 10}, // Fix: Zi year usually follows Shen/Chen pattern but some schools differ. Using standard San He.
-  4: {huo: 2, ling: 10}, // Correction: Shen-Zi-Chen starts Yin(2) for Huo, Xu(10) for Ling.
+  4: {huo: 2, ling: 10}, // Correction: Shen-Zi-Chen starts Yin(2) / Xu(10)
   
   5: {huo: 3, ling: 10}, // Si/You/Chou (Snake/Rooster/Ox) - Start Mao(3) / Xu(10)
   9: {huo: 3, ling: 10},
@@ -66,11 +66,6 @@ const HUO_LING_TABLE: Record<number, {huo: number, ling: number}> = {
   3: {huo: 9, ling: 10},
   7: {huo: 9, ling: 10}
 };
-// Overwriting specific tri-harmony logic for simplicity and accuracy
-// Shen-Zi-Chen (Monkey 8, Rat 0, Dragon 4): Huo starts Yin (2), Ling starts Xu (10)
-// Yin-Wu-Xu (Tiger 2, Horse 6, Dog 10): Huo starts Chou (1), Ling starts Mao (3)
-// Si-You-Chou (Snake 5, Rooster 9, Ox 1): Huo starts Mao (3), Ling starts Xu (10)
-// Hai-Mao-Wei (Pig 11, Rabbit 3, Sheep 7): Huo starts You (9), Ling starts Xu (10)
 
 const getHuoLing = (yearBranchIdx: number, hourIdx: number) => {
   let startHuo = 2;
@@ -83,17 +78,8 @@ const getHuoLing = (yearBranchIdx: number, hourIdx: number) => {
 
   return {
     huo: norm(startHuo + hourIdx),
-    ling: norm(startLing - hourIdx) // Ling moves CW or CCW? Standard is CW from start.
-    // Correction: Huo is CW from start. Ling is CW from start.
-    // Wait, Ling Xing:
-    // Yin-Wu-Xu: start Mao(3) CW
-    // Shen-Zi-Chen: start Xu(10) CW
-    // Si-You-Chou: start Xu(10) CW
-    // Hai-Mao-Wei: start Xu(10) CW
+    ling: norm(startLing + hourIdx) // Ling: CW from start position
   };
-  // Re-verify Ling movement. Most schools: CW.
-  // Exception: Some schools say Ling goes CCW? No, usually CW.
-  // Let's implement CW ( + hourIdx ).
 };
 
 
@@ -121,13 +107,6 @@ const KUI_YUE_TABLE = [
   {k:0, y:8}, {k:1, y:7}, {k:6, y:2}, {k:5, y:3}, {k:5, y:3}
 ];
 
-
-// Brightness Maps for Minor Stars (Simplified for brevity, can be expanded)
-// Usually Minor stars brightness is less critical for display than Major, but we can add common ones.
-const MINOR_BRIGHTNESS: Record<string, string> = {
-  // Can implement full lookup later if needed. For now, we focus on Major stars brightness correction.
-};
-
 // Full Brightness Map (Star -> Branch Index 0-11 -> Brightness Char)
 const FULL_BRIGHTNESS_MAP: Record<string, string[]> = {
   '紫微': ['平','旺','廟','旺','得','陷','旺','廟','旺','旺','得','旺'], // Shen(8)='旺'
@@ -144,7 +123,6 @@ const FULL_BRIGHTNESS_MAP: Record<string, string[]> = {
   '天梁': ['廟','旺','廟','廟','旺','陷','廟','旺','廟','廟','旺','陷'],
   '七殺': ['旺','廟','廟','陷','旺','平','旺','廟','廟','陷','旺','平'],
   '破軍': ['廟','旺','陷','平','旺','陷','廟','旺','陷','平','旺','陷'],
-  // Add simple defaults for Lucky/Sha stars if we want brightness tags later
   '文昌': ['陷','陷','利','利','廟','廟','陷','陷','利','利','廟','廟'],
   '文曲': ['廟','廟','陷','陷','利','利','廟','廟','陷','陷','利','利'],
 };
@@ -271,10 +249,7 @@ export const calculateZiWeiChart = (userData: UserInput): { chart: PalaceChartDa
 
   // Huo Xing / Ling Xing
   const hl = getHuoLing(yearZhiIdx, timeBranchIdx);
-  const hl2 = getHuoLing(yearZhiIdx, norm(timeBranchIdx + 1)); // Ling logic is tricky, using simple +hour for now
-  // Re-correct Ling: Ling starts and goes CW.
-  const lingPos = hl.ling + timeBranchIdx; // Placeholder, Ling needs careful calculation
-  // Let's use the table value + time directly:
+  // Huo Xing / Ling Xing: Using calculated positions
   addStar('火星', hl.huo, 'minor');
   addStar('鈴星', hl.ling, 'minor');
 

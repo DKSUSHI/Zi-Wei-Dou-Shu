@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { AstrologyResponse, PalaceChartData, Profile } from "../types";
+import { AstrologyResponse, PalaceChartData, Profile } from "../types.ts";
 
 // Enhanced Schema for Tab-based Analysis and Detailed Star info
 const analysisSchema: Schema = {
