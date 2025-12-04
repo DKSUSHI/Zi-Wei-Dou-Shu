@@ -4,19 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- 
-      CSP Configuration:
-      1. Allow 'self', 'unsafe-inline', 'unsafe-eval' for local script execution and Babel.
-      2. Allow specific external CDNs: tailwindcss, esm.sh, googleapis, gstatic, unpkg.
-      3. CRITICAL: Do NOT include aistudiocdn.com if it is not used/allowed.
+      CSP Fix: Explicitly allow 'unsafe-eval' because:
+      1. Tailwind CSS CDN needs it to generate styles on the fly.
+      2. Babel Standalone needs it to compile TSX in the browser.
+      We also allow specific CDNs for scripts and styles.
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdn.tailwindcss.com https://esm.sh https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://cdn.tailwindcss.com https://esm.sh https://fonts.googleapis.com https://fonts.gstatic.com;">
     
     <title>紫微斗數 - 命運羅盤</title>
     
     <!-- Tailwind CSS (Play CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Babel Standalone -->
+    <!-- Babel Standalone: Required to run .tsx files directly in the browser without a build step -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -84,15 +84,14 @@
       }
     </style>
 
-    <!-- Import Map: Explicitly using React 18.2.0 via esm.sh and REMOVING all aistudiocdn references -->
+    <!-- Import Map: Directing dependencies to ESM-ready CDNs -->
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0?dev",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?dev",
-    "react-dom": "https://esm.sh/react-dom@18.2.0?dev",
+    "react": "https://esm.sh/react@19.0.0?dev",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?dev",
     "@google/genai": "https://esm.sh/@google/genai@0.1.1",
-    "lucide-react": "https://esm.sh/lucide-react@0.460.0?deps=react@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.460.0",
     "lunar-javascript": "https://esm.sh/lunar-javascript@1.6.13?bundle",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/"
@@ -103,7 +102,12 @@
   <body>
     <div id="root"></div>
     
-    <!-- Main Entry Point -->
+    <!-- 
+      Main Entry Point 
+      1. type="text/babel": Tells Babel to compile this.
+      2. data-type="module": Tells Babel to treat imports as ES modules.
+      3. src="./index.tsx": Using ./ is CRITICAL for GitHub Pages relative paths.
+    -->
     <script type="text/babel" data-type="module" src="./index.tsx"></script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Profile, PalaceChartData } from '../types.ts';
-import { GRID_MAPPING } from '../constants.ts';
+import { Profile, PalaceChartData } from '../types';
+import { GRID_MAPPING } from '../constants';
 
 interface ChartGridProps {
   data: PalaceChartData;

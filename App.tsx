@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import InputForm from './components/InputForm.tsx';
-import ChartGrid from './components/ChartGrid.tsx';
-import AnalysisSection from './components/AnalysisSection.tsx';
-import { UserInput, AstrologyResponse, PalaceChartData, Profile } from './types.ts';
-import { calculateZiWeiChart } from './services/ziweiCalculator.ts';
-import { generateInterpretation } from './services/geminiService.ts';
+import InputForm from './components/InputForm';
+import ChartGrid from './components/ChartGrid';
+import AnalysisSection from './components/AnalysisSection';
+import { UserInput, AstrologyResponse, PalaceChartData, Profile } from './types';
+import { calculateZiWeiChart } from './services/ziweiCalculator';
+import { generateInterpretation } from './services/geminiService';
 import { ArrowLeft } from 'lucide-react';
-import { SAMPLE_DATA_LOADING } from './constants.ts';
+import { SAMPLE_DATA_LOADING } from './constants';
 
 const App: React.FC = () => {
   const [result, setResult] = useState<AstrologyResponse | null>(null);
